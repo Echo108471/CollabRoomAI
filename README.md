@@ -11,3 +11,10 @@ Goals:
 - Summarize any slice of the conversation or an uploaded file on demand.
 - Answer questions about the ongoing discussion or past context (memory).
 - Stay present in the same stream as everyone else, with no context-switching.
+
+
+Planned Tech Stack:
+- Frontend: Svelte, Tailwind, WebSocket client
+- Backend: Golang (Fiber / Gorilla WS)
+- LLM: OpenAI API or Ollama
+- DB: PostgreSQL
