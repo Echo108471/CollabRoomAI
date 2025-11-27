@@ -34,26 +34,39 @@
   }
 </script>
 
-<div class="flex flex-col gap-2 p-1" bind:this={container}>
+<div class="flex flex-col gap-6 pb-4" bind:this={container}>
   {#each messages as m (m.id)}
-    <article class="grid grid-cols-[36px,1fr] gap-2 items-start">
-      <div class="w-9 h-9 rounded-full bg-slate-800 text-white grid place-items-center text-xs font-bold" aria-hidden="true">
+    <article class="group flex gap-4 items-start animate-slide-up" class:flex-row-reverse={m.author.type === 'human'}>
+      <!-- Avatar -->
+      <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shadow-sm
+        {m.author.type === 'human' ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-200 text-slate-700'}"
+      >
         {avatar(m.author.name)}
       </div>
-      <div class="border border-slate-200 rounded-md px-3 py-2 whitespace-pre-wrap"
-        class:bg-indigo-50={m.author.type === 'agent'}
-        class:bg-cyan-50={m.author.type === 'human'}
-      >
-        <header class="flex gap-2 items-baseline mb-1">
-          <span class="font-semibold">{m.author.name}</span>
-          <span class="text-xs text-slate-500">{new Date(m.createdAt).toLocaleTimeString()}</span>
-        </header>
-        <div>{m.content}</div>
+
+      <!-- Message Bubble -->
+      <div class="flex flex-col max-w-[75%] {m.author.type === 'human' ? 'items-end' : 'items-start'}">
+        <div class="flex items-baseline gap-2 mb-1 px-1">
+          <span class="text-sm font-semibold text-slate-900">{m.author.name}</span>
+          <span class="text-xs text-slate-400">{new Date(m.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+        </div>
+        
+        <div class="px-5 py-3 rounded-2xl shadow-sm text-[15px] leading-relaxed whitespace-pre-wrap
+          {m.author.type === 'human' 
+            ? 'bg-indigo-600 text-white rounded-tr-none' 
+            : 'bg-white border border-slate-100 text-slate-800 rounded-tl-none'}"
+        >
+          {m.content}
+        </div>
       </div>
     </article>
   {/each}
+  
   {#if messages.length === 0}
-    <div class="text-center text-slate-500 mt-8">No messages yet. Say hi!</div>
+    <div class="flex flex-col items-center justify-center py-20 text-center opacity-50">
+      <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4 text-2xl">👋</div>
+      <h3 class="text-lg font-medium text-slate-900">Welcome to the room!</h3>
+      <p class="text-slate-500">Start the conversation with your AI teammates.</p>
+    </div>
   {/if}
-  <div class="h-px"></div>
 </div>
