@@ -1,7 +1,6 @@
 package chat
 
 import (
-	"encoding/json"
 	"log"
 	"sync"
 	"time"
@@ -103,12 +102,12 @@ func (h *Hub) HandleConnection(c *websocket.Conn) {
 			}
 			break
 		}
-		
+
 		// Ensure server-side timestamp and ID if missing (simplified)
 		if msg.CreatedAt == 0 {
 			msg.CreatedAt = time.Now().UnixMilli()
 		}
-		
+
 		h.broadcast <- msg
 	}
 }
@@ -117,7 +116,7 @@ func (h *Hub) processAgentResponses(userMsg Message) {
 	for _, a := range h.agents {
 		// Simulate thinking delay
 		time.Sleep(1 * time.Second)
-		
+
 		replyContent, err := a.Reply(userMsg.Content)
 		if err != nil {
 			log.Printf("Agent %s error: %v", a.Name, err)
@@ -135,7 +134,7 @@ func (h *Hub) processAgentResponses(userMsg Message) {
 			Content:   replyContent,
 			CreatedAt: time.Now().UnixMilli(),
 		}
-		
+
 		h.broadcast <- replyMsg
 	}
 }
