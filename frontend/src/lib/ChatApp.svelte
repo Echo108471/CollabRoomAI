@@ -7,12 +7,8 @@
   let displayName = $state('You');
 
   $effect.root(() => {
-    // initialize demo room once
-    chatStore.initRoom(roomId, [
-      { id: 'u1', name: displayName, type: 'human' },
-      { id: 'a1', name: 'HelperBot', type: 'agent' },
-      { id: 'a2', name: 'SkepticBot', type: 'agent' }
-    ]);
+    // initialize room connection
+    chatStore.initRoom(roomId, { id: 'u1', name: displayName, type: 'human' });
   });
 
   function onSend(text: string) {
