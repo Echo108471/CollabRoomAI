@@ -82,7 +82,7 @@
 
     <footer class="p-6 bg-white border-t border-slate-100">
       <div class="max-w-4xl mx-auto">
-        <MessageInput on:send={(e) => onSend(e.detail)} />
+        <MessageInput on:send={(e: CustomEvent<string>) => onSend(e.detail)} />
       </div>
     </footer>
   </div>

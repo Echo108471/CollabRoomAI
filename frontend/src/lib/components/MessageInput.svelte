@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  const dispatch = createEventDispatcher<{ send: string }>();
+  function emitSend(detail: string) {
+    dispatchEvent(new CustomEvent('send', { detail }));
+  }
 
   let value = $state('');
   let disabled = $state(false);
@@ -8,7 +9,7 @@
   function submit() {
     const text = value.trim();
     if (!text || disabled) return;
-    dispatch('send', text);
+    emitSend(text);
     value = '';
   }
 
