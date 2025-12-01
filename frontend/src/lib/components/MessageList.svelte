@@ -10,6 +10,7 @@
 	$effect.root(() => {
 		const unsubscribe = chatStore.subscribe(() => {
 			messages = chatStore.getMessages(roomId);
+			console.log('MessageList updated, count:', messages.length);
 		});
 
 		// also recompute immediately and when roomId changes

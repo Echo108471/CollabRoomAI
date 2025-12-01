@@ -58,6 +58,7 @@ func (h *Hub) Run() {
 			h.mutex.Lock()
 			h.clients[conn] = true
 			h.mutex.Unlock()
+			log.Printf("Client registered. Total clients: %d", len(h.clients))
 
 		case conn := <-h.unregister:
 			h.mutex.Lock()
@@ -88,8 +89,10 @@ func (h *Hub) Run() {
 }
 
 func (h *Hub) HandleConnection(c *websocket.Conn) {
+	log.Println("New connection established")
 	h.register <- c
 	defer func() {
+		log.Println("Connection closing")
 		h.unregister <- c
 	}()
 
@@ -103,12 +106,20 @@ func (h *Hub) HandleConnection(c *websocket.Conn) {
 			break
 		}
 
-		// Ensure server-side timestamp and ID if missing (simplified)
-		if msg.CreatedAt == 0 {
-			msg.CreatedAt = time.Now().UnixMilli()
-		}
+		h.enrichMessage(&msg)
+		log.Printf("Broadcasting message: %+v", msg)
 
 		h.broadcast <- msg
+	}
+}
+
+func (h *Hub) enrichMessage(msg *Message) {
+	// Ensure server-side timestamp and ID if missing (simplified)
+	if msg.CreatedAt == 0 {
+		msg.CreatedAt = time.Now().UnixMilli()
+	}
+	if msg.ID == "" {
+		msg.ID = uid()
 	}
 }
 

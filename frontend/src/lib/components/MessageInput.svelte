@@ -1,6 +1,10 @@
 <script lang="ts">
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
+
 	function emitSend(detail: string) {
-		dispatchEvent(new CustomEvent('send', { detail }));
+		dispatch('send', detail);
 	}
 
 	let value = $state('');

@@ -40,6 +40,7 @@ export const chatStore = {
 	subscribe: state.subscribe,
 
 	initRoom(id: string, user: Participant) {
+		console.log('initRoom called for', id);
 		ensureRoom(id);
 		// Add the user to the room participants if not already present
 		state.update((s) => {
@@ -66,22 +67,29 @@ export const chatStore = {
 
 		socket.onmessage = (event) => {
 			try {
+				console.log('Received message:', event.data);
 				const msg: Message = JSON.parse(event.data);
 				state.update((s) => {
-					const room = s.rooms[msg.roomId] || { id: msg.roomId, participants: [], messages: [] };
+					const oldRoom = s.rooms[msg.roomId] || { id: msg.roomId, participants: [], messages: [] };
+					const room = { ...oldRoom };
 
 					// Add message
 					if (!room.messages.find((m) => m.id === msg.id)) {
-						room.messages.push(msg);
+						room.messages = [...room.messages, msg];
 					}
 
 					// Update participants if new
 					if (!room.participants.find((p) => p.id === msg.author.id)) {
-						room.participants.push(msg.author);
+						room.participants = [...room.participants, msg.author];
 					}
 
-					s.rooms[msg.roomId] = room;
-					return s;
+					return {
+						...s,
+						rooms: {
+							...s.rooms,
+							[msg.roomId]: room
+						}
+					};
 				});
 			} catch (e) {
 				console.error('Failed to parse message', e);
@@ -109,6 +117,7 @@ export function sendMessage({
 	authorId: string;
 	content: string;
 }) {
+	console.log('sendMessage called with:', content);
 	if (!socket || socket.readyState !== WebSocket.OPEN) {
 		console.error('Socket not connected');
 		return;
