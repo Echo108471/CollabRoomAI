@@ -12,17 +12,24 @@ type Agent struct {
 	Name         string
 	SystemPrompt string
 	client       *openai.Client
+	Model        string
 }
 
 func NewAgent(id, name, systemPrompt string) *Agent {
 	apiKey := os.Getenv("OPENAI_API_KEY")
 	client := openai.NewClient(apiKey)
-	
+	// Optional: allow overriding model via environment
+	model := os.Getenv("OPENAI_MODEL")
+	if model == "" {
+		model = openai.GPT3Dot5Turbo
+	}
+
 	return &Agent{
 		ID:           id,
 		Name:         name,
 		SystemPrompt: systemPrompt,
 		client:       client,
+		Model:        model,
 	}
 }
 
@@ -30,7 +37,7 @@ func (a *Agent) Reply(userContent string) (string, error) {
 	resp, err := a.client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
-			Model: openai.GPT3Dot5Turbo,
+			Model: a.Model,
 			Messages: []openai.ChatCompletionMessage{
 				{
 					Role:    openai.ChatMessageRoleSystem,
